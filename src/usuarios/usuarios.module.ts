@@ -10,9 +10,9 @@ import { JwtModule } from '@nestjs/jwt';
   imports: [
     TypeOrmModule.forFeature([Usuario]),
     JwtModule.register({
-      global: true, // Torna o JwtService disponível em toda a aplicação
-      secret: 'SUA_CHAVE_SECRETA_SUPER_PROTEGIDA', // Em produção, use variáveis de ambiente!
-      signOptions: { expiresIn: '1d' }, // O token vai expirar em 1 dia
+      global: true, 
+      secret: 'SUA_CHAVE_SECRETA_SUPER_PROTEGIDA',
+      signOptions: { expiresIn: '1d' },
     }), 
   ],
   controllers: [UsuariosController],

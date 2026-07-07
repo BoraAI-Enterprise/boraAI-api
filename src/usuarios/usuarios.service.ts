@@ -3,13 +3,16 @@ import { LoginDto } from './dto/loginDto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { UsuarioRepository } from './usuario.repository';
 import { Usuario } from './entities/usuario.entity';
-import { randomUUID } from 'crypto';
 import { DateUtils } from 'typeorm/util/DateUtils.js';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UsuariosService {
 
-  constructor(private readonly usuarioRepository: UsuarioRepository){}
+  constructor(
+    private readonly usuarioRepository: UsuarioRepository,
+    private readonly jwtService: JwtService
+  ){}
 
   async cadastrar(usuario: Usuario) {
 
@@ -37,17 +40,16 @@ export class UsuariosService {
 
     const senhaValida = usuarioExistente.senha === loginDto.senha
 
-    if(!usuarioExistente){
+    if(!senhaValida){
       throw new UnauthorizedException('Credenciais inválidas');
     }
 
+    const payload = {sub: usuarioExistente.id, email: usuarioExistente.email};
+    const token = await this.jwtService.signAsync(payload);
+
     return {
       mensagem: 'Login realizado com sucesso',
-      usuario: {
-        id: usuarioExistente.id,
-        nome: usuarioExistente.nome,
-        email: usuarioExistente.email,
-      },
+      token: token
     };
 
   }
